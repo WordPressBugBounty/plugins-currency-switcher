@@ -1,0 +1,232 @@
+#wpcs-sd-main{
+    width: 100%;
+    height: 600px;
+    background: #eee;
+    max-width: 900px;
+    margin: 0 auto;
+    margin-top: 20px;
+    padding: 3px;
+    position: relative;
+}
+
+.wpcs-sd-main-wrapper{
+    margin-top: 0;
+    padding: 0;
+    height: 100%;
+    position: relative;
+}
+
+.wpcs-sd-panel{
+    height: 100%;
+    display: none;
+
+    background-size: 15px 15px;
+    background-position: center center;
+}
+
+.wpcs-sd-panel-current{
+    display: block;
+}
+
+.wpcs-sd-panel-options{
+    position: relative;
+    padding: 0;
+    clear: both;
+}
+
+.wpcs-sd-panel-options .wpcs-sd-group:last-child{
+    margin: 0;
+}
+
+#selectron23-example{
+    width: 500px;
+    z-index: 99999;
+    position: relative;
+    margin: 0 auto;
+}
+
+#selectron23-example-container{
+    position: relative;
+    z-index: 99999;
+    background-color: rgb(255, 255, 255, 0.9);
+    padding: 11px;
+    margin-bottom: 9px;
+}
+
+.selectron23-example-container-fixed{
+    position: fixed !important;
+    top: 0;
+    left: 0;
+}
+
+.wpcs-sd-group{
+    border: solid 1px #bbb;
+    background: linear-gradient( #bbb, transparent 1px), linear-gradient( 90deg, #bbb, transparent 1px), #fff;
+    padding: 5px;
+    background: #fff;
+    margin: 0 0 15px 0;
+}
+
+.wpcs-sd-group header{
+    position: relative;
+    font-family: Arial;
+    background: #eee;
+    padding: 25px;
+    font-size: 23px;
+    font-family: 'Nunito';
+}
+
+.wpcs-sd-group article{
+    padding: 5px;
+    margin: 15px 0 25px 0;
+}
+
+.wpcs-sd-label{
+    padding: 21px 0 6px 0;
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.wpcs-sd-option{
+    margin-bottom: 11px;
+    position: relative;
+}
+
+.wpcs-sd-option .wp-color-picker{
+    height: 42px !important;
+    width: 65px;
+    margin-right: 5px;
+}
+
+.wpcs-sd-option .wp-color-picker ~ input[type="text"]{
+    vertical-align: bottom !important;
+    height: 30px !important;
+}
+
+#wpcs-sd-main-buttons{
+    position: fixed;
+    padding: 5px 0 5px 5px;
+    bottom: 0;
+    background-color: rgb(255, 255, 255, 0.9);
+    z-index: 99999;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    border-top-right-radius: 4px;
+    border-top-left-radius: 4px;
+}
+
+#wpcs-sd-main-buttons > div{
+    flex-wrap: wrap;
+}
+
+.wpcs-sd-slider{
+    width: 100%;
+}
+
+input.wpcs-sd-slider-input{
+    position: absolute;
+    right: 0;
+    top: 15px;
+    width: 65px !important;
+    min-height: 20px !important;
+    height: 25px !important;
+    padding: 0 8px !important;
+    border-radius: 2px;
+}
+
+#wpcs-sd-nav{
+    position: absolute;
+    right: 0;
+    bottom: -7px;
+}
+
+#wpcs-sd-nav > div{
+    margin: 0 15px 0 0;
+    float: left;
+}
+
+#wpcs-sd-nav > div a{
+    font-size: 14px;
+    color: cornflowerblue;
+    text-decoration: none;
+}
+
+.wpcs-sd-section-header-num{
+    position: absolute;
+    right: 9px;
+    top: 9px;
+    font-size: 14px;
+    color: #aaa;
+}
+
+.wpcs-sd-missing-options{
+    text-align: center;
+    padding: 12px 0 0 0;
+}
+
+.wpcs-sd-missing-options a{
+    font-size: 11px;
+    color: #aaa;
+    text-decoration: none;
+}
+
+
+
+
+.wpcs-sd-tooltip-toggle {
+    cursor: pointer;
+    position: relative;
+    z-index: 9998;
+    font-weight: bold;
+}
+
+.wpcs-sd-tooltip-toggle svg {
+    height: 15px;
+    width: 15px;
+}
+
+.wpcs-sd-option .wpcs-sd-tooltip-toggle svg {
+    margin: 0 0 0 5px;
+    position: absolute;
+}
+
+.wpcs-sd-tooltip-toggle::before {
+    position: absolute;
+    top: -50%;
+    right: 30px;
+    background-color: #fff;
+    border-radius: 5px;
+    border: solid 1px cornflowerblue;
+    color: #fff;
+    content: attr(aria-label);
+    padding: 11px;
+    text-transform: none;
+    transition: all 0.5s ease;
+    width: 240px;
+}
+
+.wpcs-sd-option .wpcs-sd-tooltip-toggle::before {
+    left: 30px;
+}
+
+.wpcs-sd-tooltip-toggle::before{
+    color: #777;
+    font-family: monospace;
+    font-size: 14px;
+    opacity: 0;
+    pointer-events: none;
+    text-align: center;
+}
+.wpcs-sd-tooltip-toggle:focus::before, .wpcs-sd-tooltip-toggle:focus::after,
+.wpcs-sd-tooltip-toggle:hover::before, .wpcs-sd-tooltip-toggle:hover::after {
+    opacity: 1;
+    transition: all 0.75s ease;
+}
+
+
+.wpcs-sd-option .wpcs-sd-text-input{
+    width: 50%;
+}
+
+

@@ -1,0 +1,870 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. Text in function
+#: currency-switcher/views/shortcodes/wpcs_check_country.php:4
+msgid " Code: "
+msgstr ""
+
+#. Text in function
+#: currency-switcher/views/shortcodes/wpcs_rates.php:34
+msgid "1 %s is"
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/views/plugin_options.php:347
+msgid "Add currency"
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/views/plugin_options.php:349
+msgid "Add custom money sign"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/views/plugin_options.php:958
+msgid "Add your money symbols in your shop.<br />Example: $USD,AAA,AUD$,DDD - separated by commas"
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/views/plugin_options.php:604
+msgid "Additional field"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/views/plugin_options.php:958
+msgid "Aggregator API key"
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/views/plugin_options.php:591
+msgid "Basic field"
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/views/plugin_options.php:640
+msgid "Behavior for devices"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/views/plugin_options.php:958
+msgid "CURL for aggregators"
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/views/plugin_options.php:542
+#: currency-switcher/views/plugin_options.php:652
+msgid "Choise side"
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/views/plugin_options.php:513
+msgid "Choise skin"
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/views/plugin_options.php:688
+msgid "Choose a country..."
+msgstr ""
+
+#. Text in function
+#: currency-switcher/views/plugin_options.php:698
+msgid "Classic blocks"
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/views/plugin_options.php:965
+msgid "Click to select the flag"
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/views/shortcodes/wpcs_converter.php:59
+msgid "Convert"
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/views/widgets/converter_form.php:20
+#: currency-switcher/views/widgets/rates_form.php:20
+msgid "Count of digits after point"
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/views/plugin_options.php:302
+msgid "Currencies"
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/views/widgets/converter_form.php:11
+#: currency-switcher/views/widgets/rates_form.php:11
+msgid "Currencies excluding from view"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/views/plugin_options.php:958
+msgid "Currencies rate auto update by wp cron"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/index.php:1
+msgid "Currency Options"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/index.php:1
+msgid "Currency Switcher"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/views/plugin_options.php:958
+msgid "Currency aggregator"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/views/plugin_options.php:958
+msgid "Currency aggregators. Note: XE Currency Converter doesnt work with crypto-currency such as BTC!"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/views/plugin_options.php:958
+msgid "Currency storage"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/index.php:584
+msgid "Current currency is:"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/views/plugin_options.php:958
+msgid "Custom money signs. <!-- <span style=\"color: #ff0000;\">This feature is disabled.</span> -->"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/views/plugin_options.php:958
+msgid "Custom price format"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/views/plugin_options.php:958
+msgid "Customer will pay with selected currency or with default currency."
+msgstr ""
+
+#. Text in function
+#: currency-switcher/views/plugin_options.php:958
+msgid "Decimal separator"
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/views/plugin_options.php:561
+msgid "Distance from the top of the screen"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/index.php:1
+msgid "Documentation"
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/views/widgets/selector_form.php:50
+msgid "Drop-down options text type"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/views/plugin_options.php:958
+msgid "Drop-down view"
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/views/widgets/selector_form.php:13
+msgid "Examples: 300px,100%,auto"
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/views/widgets/converter_form.php:13
+#: currency-switcher/views/widgets/rates_form.php:13
+msgid "Examples: EUR,GBP,UAH"
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/views/plugin_options.php:924
+msgid "Exmpl.: USD,EUR"
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/views/plugin_options.php:387
+msgid "Fixer"
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/views/plugin_options.php:965
+msgid "Flag"
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/views/widgets/selector_form.php:32
+msgid "Flag position"
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/views/widgets/selector_form.php:44
+msgid "For ddslick skin only!"
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/views/plugin_options.php:325
+msgid "GeoIP rules"
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/index.php:1794
+msgid "Give Feedback"
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/index.php:1777
+msgid "Hi! Are you enjoying using <i>WPCS - WordPress Currency Switcher</i>?"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/views/plugin_options.php:941
+msgid "Hide cents"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/views/plugin_options.php:698
+msgid "Hide on mobile devices"
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/views/plugin_options.php:628
+msgid "Hide on the pages"
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/views/plugin_options.php:635
+msgid "Hide switcher on the selected pages. Set IDs of these pages, example: 28,34,232 OR use special words: home,front_page"
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/views/plugin_options.php:383
+#: currency-switcher/views/plugin_options.php:384
+msgid "Hint"
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/views/plugin_options.php:579
+msgid "Hover color"
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/views/plugin_options.php:525
+msgid "How much to roll. "
+msgstr ""
+
+#. Text in function
+#: currency-switcher/views/plugin_options.php:958
+msgid "How to display currency switcher drop-down on the front of your site"
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/index.php:1787
+msgid "I already did"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/views/plugin_options.php:958
+msgid "I am using cache plugin on my site"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/views/plugin_options.php:958
+msgid "In some servers there is troubles with sessions, and after currency selecting its reset to welcome currency or geo ip currency. In such case use transient!"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/views/plugin_options.php:958
+msgid "In wich currency show prices for first visit of your customer on your site"
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/views/plugin_options.php:333
+msgid "Info Help"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/views/plugin_options.php:958
+msgid "Is multiple allowed"
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/index.php:1775
+msgid "Later"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/views/plugin_options.php:698
+msgid "Left"
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/views/plugin_options.php:566
+msgid "Main color"
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/views/plugin_options.php:574
+msgid "Main color of the switcher"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/views/plugin_options.php:958
+#: currency-switcher/views/plugin_options.php:698
+msgid "No"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/views/plugin_options.php:958
+msgid "No GET data in link"
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/index.php:1795
+msgid "No thanks"
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/index.php:1786
+msgid "Nope, maybe later"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/classes/rate_alert.php:62
+msgid "Nope, maybe later!"
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/index.php:1778
+msgid "Not really..."
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/views/plugin_options.php:386
+msgid "OR"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/classes/rate_alert.php:66
+msgid "Ok, you deserve it"
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/index.php:1785
+msgid "Okay, you deserve it"
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/views/plugin_options.php:310
+msgid "Options"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/index.php:584
+msgid "Please use the API key"
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/views/widgets/converter_form.php:18
+#: currency-switcher/views/widgets/rates_form.php:18
+msgid "Precision"
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/views/plugin_options.php:939
+msgid "Press this button if you want get currency rate from the selected aggregator above!"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/views/plugin_options.php:958
+msgid "Rate auto update"
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/views/plugin_options.php:391
+msgid "Read wiki about Currency Active codes  <-  Get right currencies codes here if you are not sure about it!"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/views/plugin_options.php:698
+msgid "Right"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/views/plugin_options.php:698
+msgid "Roll blocks"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/views/plugin_options.php:698
+msgid "Round select"
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/views/plugin_options.php:909
+msgid "Save options"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/views/shortcodes/styles/style-3/index.php:83
+msgid "Select Currency"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/views/plugin_options.php:958
+msgid "Set Yes here ONLY if you are REALLY use cache plugin for your site, for example like Super cache or Hiper cache (doesn matter). After enabling this feature - clean your cache to make it works. It will allow show prices in selected currency on all pages of site. Fee for this feature - additional AJAX queries for products prices redrawing."
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/views/plugin_options.php:919
+msgid "Set etalon main currency. This should be the currency in which the price of goods exhibited!"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/views/plugin_options.php:958
+msgid "Set your format how to display price on front.<br />Use keys: __CODE__,__PRICE__. Leave it empty to use default format. Example: __PRICE__ (__CODE__)"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/index.php:1
+msgid "Settings"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/views/plugin_options.php:941
+msgid "Show cents"
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/views/plugin_options.php:479
+msgid "Show fixed switcher"
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/views/widgets/selector_form.php:26
+msgid "Show flags"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/views/plugin_options.php:958
+msgid "Show flags by default"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/views/plugin_options.php:958
+msgid "Show info icon near the price of the product which while its under hover shows prices of products in all currencies"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/views/plugin_options.php:958
+msgid "Show money signs"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/views/plugin_options.php:698
+msgid "Show on all devices"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/views/plugin_options.php:698
+msgid "Show on mobile devices only"
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/views/plugin_options.php:616
+msgid "Show on the pages"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/views/plugin_options.php:958
+msgid "Show options button on top admin bar"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/views/plugin_options.php:958
+msgid "Show options button on top admin bar."
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/views/plugin_options.php:657
+msgid "Show or hide on mobile device. (high priority)"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/views/plugin_options.php:958
+msgid "Show price info icon"
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/views/plugin_options.php:623
+msgid "Show switcher on the selected pages. Set IDs of these pages, example: 28,34,232 OR use special words: home,front_page"
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/views/plugin_options.php:489
+msgid "Show/Hide"
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/views/plugin_options.php:496
+msgid "Show/Hide the side currency switcher on your page"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/views/plugin_options.php:958
+msgid "Show/hide flags on the front drop-down"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/views/plugin_options.php:958
+msgid "Show/hide money signs on the front drop-down"
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/views/plugin_options.php:531
+msgid "Side"
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/views/plugin_options.php:317
+msgid "Side switcher"
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/views/plugin_options.php:502
+msgid "Skin"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/views/plugin_options.php:958
+msgid "Some aggregators require an API key. See the hint below how to get it!"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/views/plugin_options.php:958
+msgid "Style #1"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/views/plugin_options.php:958
+msgid "Style #2"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/views/plugin_options.php:958
+msgid "Style #3"
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/views/plugin_options.php:519
+msgid "Style of the fixed switcher"
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/views/plugin_options.php:712
+msgid "Support"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/views/plugin_options.php:958
+msgid "Switches currency without GET properties (?currency=USD) in the link."
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/views/plugin_options.php:931
+msgid "Symbol pos."
+msgstr ""
+
+#. Text in function
+#: currency-switcher/classes/rate_alert.php:70
+msgid "Thank you, I did it!"
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/views/plugin_options.php:385
+msgid "The Free Currency Converter"
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/views/plugin_options.php:548
+msgid "The side where the switcher should be placed"
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/views/plugin_options.php:586
+msgid "The switcher color when mouse hovering"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/views/plugin_options.php:958
+msgid "Thousandth separator"
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/views/widgets/converter_form.php:5
+#: currency-switcher/views/widgets/rates_form.php:5
+#: currency-switcher/views/widgets/selector_form.php:5
+msgid "Title"
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/views/plugin_options.php:384
+msgid "To get free API key for:"
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/views/plugin_options.php:383
+msgid "To update all currencies rates by one click - press radio button of the basic currency and then press \"Save changes\" button!"
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/views/plugin_options.php:553
+msgid "Top margin"
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/views/plugin_options.php:348
+msgid "Update all rates"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/views/plugin_options.php:958
+msgid "Use GeoLocation"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/views/plugin_options.php:958
+msgid "Use GeoLocation rules for your currencies."
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/views/plugin_options.php:711
+msgid "Use currency codes from the next wiki-page to avoid rates auto update misfunctionality"
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/views/plugin_options.php:611
+msgid "Variants:  __CODE__ __FLAG__ __SIGN__ __DESCR__"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/views/plugin_options.php:958
+msgid "Welcome currency"
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/views/widgets/selector_form.php:62
+msgid "Which text display in the drop-down options - currency code OR description text. Looks good for all dropdowns except ddslick."
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/views/widgets/selector_form.php:11
+msgid "Width"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/views/plugin_options.php:286
+msgid "WordPress Currency Switcher v.%s"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/views/plugin_options.php:958
+#: currency-switcher/views/plugin_options.php:698
+msgid "Yes"
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/index.php:1778
+msgid "Yes, I love it"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/views/plugin_options.php:958
+msgid "You can use it if aggregators doesn works with file_get_contents function because of security reasons. If all is ok leave it No!"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/views/shortcodes/wpcs_check_country.php:3
+msgid "Your current country is:"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/views/plugin_options.php:958
+msgid "chosen"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/views/plugin_options.php:958
+msgid "chosen dark"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/views/widgets/selector_form.php:51
+msgid "code"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/views/plugin_options.php:958
+msgid "daily"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/views/plugin_options.php:958
+msgid "ddslick"
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/views/plugin_options.php:957
+#: currency-switcher/views/widgets/selector_form.php:51
+msgid "description"
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/views/plugin_options.php:967
+msgid "drag and drope"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/index.php:1
+msgid "each %s month"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/index.php:1
+msgid "each %s week"
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/views/shortcodes/wpcs_converter.php:22
+msgid "enter amount"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/views/plugin_options.php:958
+msgid "hourly"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/views/plugin_options.php:958
+msgid "http://finance.yahoo.com"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/views/plugin_options.php:958
+msgid "http://google.com/finance"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/views/plugin_options.php:958
+msgid "http://www.cbr.ru - russian centrobank"
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/views/plugin_options.php:938
+msgid "interest"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/views/widgets/selector_form.php:51
+msgid "left"
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/index.php:580
+msgid "loading"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/views/plugin_options.php:958
+msgid "monthly"
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/views/plugin_options.php:967
+msgid "move"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/views/plugin_options.php:958
+msgid "no auto update"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/index.php:584
+msgid "no data for %s"
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/views/plugin_options.php:936
+msgid "rate"
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/views/plugin_options.php:966
+msgid "remove"
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/views/shortcodes/wpcs_converter.php:57
+msgid "results"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/views/widgets/selector_form.php:51
+msgid "right"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/views/plugin_options.php:958
+msgid "session"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/views/plugin_options.php:958
+msgid "show as flags"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/views/plugin_options.php:958
+msgid "simple drop-down"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/classes/rate_alert.php:46
+msgid "support"
+msgstr ""
+
+#. Text in echo
+#: currency-switcher/views/shortcodes/wpcs_converter.php:40
+msgid "to"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/views/plugin_options.php:958
+msgid "transient"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/views/plugin_options.php:958
+msgid "twicedaily"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/views/plugin_options.php:958
+msgid "wSelect"
+msgstr ""
+
+#. Text in function
+#: currency-switcher/views/plugin_options.php:958
+msgid "weekly"
+msgstr ""
