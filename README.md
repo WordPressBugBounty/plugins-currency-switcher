@@ -1,0 +1,1 @@
+# plugins-currency-switcher
