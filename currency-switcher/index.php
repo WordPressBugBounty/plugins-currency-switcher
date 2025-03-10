@@ -4,9 +4,9 @@
   Plugin URI: https://wp-currency.com/
   Description: Currency Switcher for WordPress - plugin that allows to switch currencies and get their rates converted in the real time on your site!
   Author: realmag777
-  Version: 1.2.0.4
+  Version: 1.2.0.5
   Requires at least: WP 3.5.0
-  Tested up to: WP 6.6
+  Tested up to: WP 6.7
   Text Domain: currency-switcher
   Domain Path: /languages
   Forum URI: https://pluginus.net/support/forum/wpcs-wordpress-currency-switcher/
@@ -18,7 +18,7 @@ if (!defined('ABSPATH')) {
 }
 
 //***
-define('WPCS_VERSION', '1.2.0.4');
+define('WPCS_VERSION', '1.2.0.5');
 //define('WPCS_VERSION', uniqid('wpcs-')); //for dev
 define('WPCS_PATH', plugin_dir_path(__FILE__));
 define('WPCS_LINK', plugin_dir_url(__FILE__));
@@ -31,7 +31,7 @@ include_once WPCS_PATH . 'classes/auto_switcher.php';
 include_once WPCS_PATH . 'classes/smart-designer.php';
 include_once WPCS_PATH . 'classes/world_currencies.php';
 
-//18-07-2024
+//10-03-2025
 final class WPCS {
 
     public $storage = null;
@@ -1917,7 +1917,14 @@ final class WPCS {
         if (!isset($currencies[$currency])) {
             $currency = $this->default_currency;
         }
-        wp_die(do_shortcode('[wpcs_rates exclude="' . esc_attr(strip_shortcodes($_REQUEST['exclude'])) . '" precision="' . intval($_REQUEST['precision']) . '" current_currency="' . esc_attr($currency) . '"]'));
+        
+        $excluded_currenies=[];
+
+        if (!empty($_REQUEST['exclude'])) {
+            $excluded_currenies = array_intersect(array_keys($currencies), explode(',', sanitize_text_field($_REQUEST['exclude'])));
+        }
+
+        wp_die(do_shortcode('[wpcs_rates exclude="' . esc_attr(implode(',', $excluded_currenies)) . '" precision="' . intval($_REQUEST['precision']) . '" current_currency="' . esc_attr($currency) . '"]'));
     }
 
     //ajax

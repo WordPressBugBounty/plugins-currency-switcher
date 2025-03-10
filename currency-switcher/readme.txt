@@ -3,9 +3,9 @@ Contributors: RealMag777
 Donate link: https://wp-currency.com/a/buy
 Tags: currency, switcher, currency switcher, converter, price
 Requires at least: 3.6.0
-Tested up to: 6.6
+Tested up to: 6.7
 Requires PHP: 5.6
-Stable tag: 1.2.0.4
+Stable tag: 1.2.0.5
 
 WordPress Currency Switcher Professional - a WordPress plugin that allows switching price currencies on your site with real-time rate conversion!
 
@@ -114,15 +114,21 @@ Note: for today design of the plugin is different of the video (is improved), se
 
 == Frequently Asked Questions ==
 
-* Where to find the plugin options page? Here: wp-admin/options-general.php?page=currency-switcher-settings
+Q: Where to find the plugin options page? 
+R: Here: wp-admin/options-general.php?page=currency-switcher-settings
 
-* [Demo page](https://demo.wp-currency.com/)
+Q: [Demo page](https://demo.wp-currency.com/)
 
-* [Documentation](https://wp-currency.com/codex/)
+Q: [Documentation](https://wp-currency.com/codex/)
 
-* How to add new currency? In the plugin settings page by 'Add currency' button
+Q: How to add new currency? 
+R: In the plugin settings page by 'Add currency' button
 
-* Flags? [Here!](https://wp-currency.com/can-get-flags/)
+Q: Flags? 
+R: [Here!](https://wp-currency.com/can-get-flags/)
+
+Q: Where can I send security bug report about the plugin?
+R: You can report security bugs through the Patchstack Vulnerability Disclosure Program. The Patchstack team help validate, triage and handle any security vulnerabilities. [Report a security vulnerability.](https://patchstack.com/database/vdp/currency-switcher)
 
 
 == Screenshots ==
@@ -137,6 +143,9 @@ Note: for today design of the plugin is different of the video (is improved), se
 
 
 == Changelog ==
+
+= 1.2.0.5 =
+* security fix, thanks to Hydzik from wordfence.com
 
 = 1.2.0.4 =
 * security fix, thanks to stealthcopter from patchstack.com
@@ -229,7 +238,7 @@ Note: for today design of the plugin is different of the video (is improved), se
 
 == License ==
 
-This plugin is copyright pluginus.net &copy; 2012-2024 with [GNU General Public License][] by realmag777.
+This plugin is copyright pluginus.net &copy; 2012-2025 with [GNU General Public License][] by realmag777.
 
 This program is free software; you can redistribute it and/or modify it under the terms of the [GNU General Public License][] as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
 
