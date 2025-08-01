@@ -3,9 +3,9 @@ Contributors: RealMag777
 Donate link: https://wp-currency.com/a/buy
 Tags: currency, switcher, currency switcher, converter, price
 Requires at least: 3.6.0
-Tested up to: 6.7
+Tested up to: 6.8
 Requires PHP: 5.6
-Stable tag: 1.2.0.5
+Stable tag: 1.3.0
 
 WordPress Currency Switcher Professional - a WordPress plugin that allows switching price currencies on your site with real-time rate conversion!
 
@@ -143,6 +143,17 @@ R: You can report security bugs through the Patchstack Vulnerability Disclosure 
 
 
 == Changelog ==
+
+= 1.3.0 =
+* The code architecture has been redesigned
+* New Hook: wpcs_geo_position. This new hook allows you to override the user's geolocation manually. Please note: this works only for currency selection. It does not override shortcodes like geo_ip_hello. 📷 Screen: https://share.pluginus.net/image/i20250626173145.png 
+* New Option: GeoIP2 (MaxMind). Added the ability to choose the geolocation detection library. The previous one was less reliable. MaxMind’s GeoIP2 offers better accuracy. In the future, integration with an external API service might also be added. 📷 Screen: https://share.pluginus.net/image/i20250626173508.png
+* New Option: Decimal Handling for Currencies. A new option to manage decimals more flexibly. For backward compatibility, this option only works when "Show cents" is enabled. 📷 Screen: https://share.pluginus.net/image/i20250725191254.png
+* New Option: Currency-Specific Separators. Now you can define custom decimal and thousand separators for each currency.
+For backward compatibility, the "default" option is available, which uses the global formatting settings. 📷 Screens https://share.pluginus.net/image/i20250725191419.png and https://share.pluginus.net/image/i20250626174221.png
+* New Option: New Cookie-Based Storage System. Completely reworked currency storage using a hybrid cookie/transient system. A unique key is stored in the user's cookie, while the actual currency is saved in transients. This approach is designed to work better with caching and avoids issues when multiple users share the same IP address.
+It's also a great alternative to PHP sessions. 📷 Screen: https://share.pluginus.net/image/i20250626174752.png
+
 
 = 1.2.0.5 =
 * security fix, thanks to Hydzik from wordfence.com

@@ -1,6 +1,12 @@
 'use strict';
 window.addEventListener('load', function () {
 
+	wpcs_init_selectron();
+
+});
+
+function wpcs_init_selectron(){
+    
     let selectrons = document.querySelectorAll('div[data-wpcs-sd]');
 
     if (selectrons.length > 0) {
@@ -40,6 +46,4 @@ window.addEventListener('load', function () {
             };
         });
     }
-
-});
-
+}

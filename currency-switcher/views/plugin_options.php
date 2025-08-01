@@ -33,10 +33,10 @@ require 'options-data.php';
                 <div style="padding-top: 24px;">
 
                     <?php if ($this->show_notes): ?>
-                        <?php if (time() < 1733094000): ?>
+                        <?php if (time() < 1709992800): ?>
                             <div>
                                 <br><a href="https://codecanyon.pluginus.net/item/wordpress-currency-switcher/17450674" target="_blank">
-                                        <img src="https://pluginus.net/wp-content/uploads/2024/11/envato-cybersale-2024.png" width="150" alt="Cybermonday AND Blackfriday" />
+                                        <img src="https://pluginus.net/wp-content/uploads/2024/03/spring-sale-2024-50.png" width="150" alt="50 OFF Spring Sale 2024" />
                                     </a>
                             </div>
 
@@ -309,7 +309,10 @@ require 'options-data.php';
                                                 }
                                                 ?>
 
-                                                <input type="text" class="wide" value="<?php echo esc_attr($val) ?>" name="wpcs_settings[<?php echo esc_attr($option['id']) ?>]" />
+                                                <input type="text" 
+													   class="wide <?php echo esc_attr($option['class'] ?? ''); ?>" 
+													   value="<?php echo esc_attr($val) ?>" 
+													   name="wpcs_settings[<?php echo esc_attr($option['id']) ?>]" />
 
 
                                                 <?php
@@ -669,6 +672,14 @@ require 'options-data.php';
                                 ?>
                             </ul>
                             <?php echo do_shortcode('[wpcs_check_country]'); ?>
+							<?php
+								if (is_a($this->ipCountryResolver,'Pluginus\CurrencySwitcher\GeoIp\GeoIp2IpCountryResolver', false)) {
+									?>
+									<span class="wpcs_geoip2_info" >This plugin uses GeoLite2 data created by MaxMind, available from https://www.maxmind.com.</span>
+									<?php
+								}
+							
+							?>
                         </section>
                         <?php
                     } else {
@@ -931,6 +942,37 @@ require 'options-data.php';
                                                                     <option <?php if ($hide_cents == $v): ?>selected=""<?php endif; ?> value="<?php echo esc_attr($v) ?>"><?php echo esc_html($n) ?></option>
                                                                 <?php endforeach; ?>
                                                             </select>
+                                                            <select name="wpcs_decimals[]" class="wpcs-drop-down">
+                                                                <?php
+                                                                $decimals = 2;
+                                                                if (isset($currency['decimals'])) {
+                                                                    $decimals = (int) $currency['decimals'];
+                                                                }
+                                                                ?>
+                                                                <?php for ($i = 0; $i <= 8; $i++){ ?>
+                                                                    <option <?php if ($decimals == $i): ?>selected=""<?php endif; ?> value="<?php echo esc_attr($i) ?>"><?php echo esc_html__('Decimals: ', 'currency-switcher') . esc_html($i) ?></option>
+                                                                <?php } ?>
+                                                            </select>
+                                                            <select name="wpcs_format[]" class="wpcs-drop-down">
+                                                                <?php
+                                                                $format = 0;
+                                                                if (isset($currency['format'])) {
+                                                                    $format = (int) $currency['format'];
+                                                                }
+																$formats = array(
+																	'0' => esc_html__('default', 'currency-switcher'),
+																	'1' => '1,000.00',
+																	'2' => '1.000,00',
+																	'3' => '1 000,00',
+																	'4' => '1 000.00',
+																	'5' => '1000,00',
+																	'6' => '1000.00'
+																);
+                                                                ?>
+                                                                <?php foreach ($formats as $k => $v){ ?>
+                                                                    <option <?php if ($format == $k): ?>selected=""<?php endif; ?> value="<?php echo esc_attr($k) ?>"><?php echo esc_html__('Format: ', 'currency-switcher') . esc_html($v) ?></option>
+                                                                <?php } ?>
+                                                            </select>																												
                                                             <input type="text" value="<?php echo esc_html($currency['description']) ?>" name="wpcs_description[]" style="width: 250px;" class="wpcs-text" placeholder="<?php esc_html_e("description", 'currency-switcher') ?>" />
                                                             <?php
                                                             $flag = WPCS_LINK . 'img/no_flag.png';

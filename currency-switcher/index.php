@@ -4,34 +4,38 @@
   Plugin URI: https://wp-currency.com/
   Description: Currency Switcher for WordPress - plugin that allows to switch currencies and get their rates converted in the real time on your site!
   Author: realmag777
-  Version: 1.2.0.5
+  Version: 1.3.0
   Requires at least: WP 3.5.0
-  Tested up to: WP 6.7
+  Tested up to: WP 6.8
   Text Domain: currency-switcher
   Domain Path: /languages
   Forum URI: https://pluginus.net/support/forum/wpcs-wordpress-currency-switcher/
   Author URI: https://pluginus.net/
  */
 
+use Pluginus\CurrencySwitcher\GeoIp\IpCountryResolver;
+use Pluginus\CurrencySwitcher\Country\CountryRepository;
+use Pluginus\CurrencySwitcher\Rates\Aggregators\RateProvider;
+
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
 
 //***
-define('WPCS_VERSION', '1.2.0.5');
+define('WPCS_VERSION', '1.3.0');
 //define('WPCS_VERSION', uniqid('wpcs-')); //for dev
 define('WPCS_PATH', plugin_dir_path(__FILE__));
 define('WPCS_LINK', plugin_dir_url(__FILE__));
 define('WPCS_PLUGIN_NAME', plugin_basename(__FILE__));
 
 //classes and libs
-include_once WPCS_PATH . 'lib/geo-ip/geoip.inc';
+require_once WPCS_PATH . 'vendor/autoload.php';
 include_once WPCS_PATH . 'classes/storage.php';
 include_once WPCS_PATH . 'classes/auto_switcher.php';
 include_once WPCS_PATH . 'classes/smart-designer.php';
 include_once WPCS_PATH . 'classes/world_currencies.php';
 
-//10-03-2025
+//01-08-2025
 final class WPCS {
 
     public $storage = null;
@@ -52,11 +56,25 @@ final class WPCS {
     ); //just for some setting for current wp theme adapting - for support only - it is logic hack - be care!!
     public $show_notes = true;
     public $world_currencies = null;
+    private $ipCountryResolver = null;
+    private $countryRepository = null;
 
     public function __construct() {
         $this->options = get_option('wpcs_settings', array());
         $this->storage = new WPCS_STORAGE($this->get_option('wpcs_storage', 'transient'));
         $this->world_currencies = new WPCS_World_Currencies();
+        if (isset($this->options['wpcs_geo_library']) && $this->options['wpcs_geo_library'] == 'geo_ip2') {
+            $key = $this->options['wpcs_geo_library_key'] ?? '';
+            if ($key) {
+                $this->ipCountryResolver = IpCountryResolver::getGeoIp2IpCountryResolver($key);
+            } else {
+                $this->ipCountryResolver = IpCountryResolver::getOpenIpCountryResolver();
+            }
+        } else {
+            $this->ipCountryResolver = IpCountryResolver::getOpenIpCountryResolver();
+        }
+
+        $this->countryRepository = new CountryRepository();
 
         $this->init_no_cents();
         if (!defined('DOING_AJAX')) {
@@ -258,7 +276,6 @@ final class WPCS {
 
     public function admin_head() {
         if (isset($_GET['page']) AND $_GET['page'] == 'currency-switcher-settings') {
-
             wp_enqueue_media();
             wp_enqueue_script('media-upload');
             wp_enqueue_style('thickbox');
@@ -338,6 +355,18 @@ final class WPCS {
                         $d['hide_cents'] = (int) $_POST['wpcs_hide_cents'][$key];
                     } else {
                         $d['hide_cents'] = 0;
+                    }
+
+                    if (isset($_POST['wpcs_decimals'][$key])) {
+                        $d['decimals'] = (int) $_POST['wpcs_decimals'][$key];
+                    } else {
+                        $d['decimals'] = 2;
+                    }
+
+                    if (isset($_POST['wpcs_format'][$key])) {
+                        $d['format'] = (int) $_POST['wpcs_format'][$key];
+                    } else {
+                        $d['format'] = 1;
                     }
 
                     $result[strtoupper($name)] = $d;
@@ -463,11 +492,6 @@ final class WPCS {
         }
     }
 
-    public function get_geoip_object() {
-        $gi = geoip_open(WPCS_PATH . 'lib/GeoIP.dat', GEOIP_MEMORY_CACHE);
-        return $gi;
-    }
-
     public function add_currencies_ajax() {
         if (!wp_doing_ajax() OR !current_user_can('manage_options')) {
 //we need it just only for ajax update
@@ -568,15 +592,12 @@ final class WPCS {
         $done = false;
         if ($this->is_use_geo_rules()) {
             try {
-                $gi = $this->get_geoip_object();
-                $pd = geoip_country_code_by_addr($gi, $_SERVER['REMOTE_ADDR']);
-                geoip_close($gi);
-                if (isset($_SERVER["HTTP_CF_IPCOUNTRY"])) {
-                    $pd = $_SERVER["HTTP_CF_IPCOUNTRY"];
-                }
+                $pd = $this->ipCountryResolver->getCountryCode();
             } catch (Exception $e) {
                 $pd = '';
             }
+
+            $pd = apply_filters('wpcs_geo_position', $pd);
 
             $rules = $this->get_geo_rules();
             $this->storage->set_val('wpcs_user_country', $pd);
@@ -641,8 +662,7 @@ final class WPCS {
         }
 
         return array_merge($buttons, $links);
-    }   
-
+    }
 
     public function widgets_init() {
         require_once WPCS_PATH . 'classes/widgets/widget-wpcs-selector.php';
@@ -663,6 +683,7 @@ final class WPCS {
     }
 
     public function wp_head() {
+
         //*** if the site is visited for the first time lets execute geo ip conditions
         $this->init_geo_currency();
         //***
@@ -680,8 +701,8 @@ final class WPCS {
             //sanitization of $_GET array
             $sanitized_get_array = $this->array_map_r($_GET);
             ?>
-			//wpcs_array_of_get = '<?php echo json_encode($sanitized_get_array,JSON_HEX_QUOT); ?>';
-            wpcs_array_of_get = '<?php echo str_replace("'", "", json_encode($sanitized_get_array)); ?>';
+                //wpcs_array_of_get = '<?php echo json_encode($sanitized_get_array, JSON_HEX_QUOT); ?>';
+                wpcs_array_of_get = '<?php echo str_replace("'", "", json_encode($sanitized_get_array)); ?>';
         <?php endif; ?>
 
             wpcs_array_no_cents = '<?php echo json_encode($this->no_cents); ?>';
@@ -779,17 +800,16 @@ final class WPCS {
             $currencies = $default;
         }
 
-        if ($this->show_notes) {
-            if (count($currencies) > 2) {
-                $currencies = array_slice($currencies, 0, 2);
-            }
+        if (count($currencies) > 2) {
+            $currencies = array_slice($currencies, 0, 2);
         }
+
 
         if (count($currencies) < 2) {
             $currencies = $default;
         }
 
-        //fix if curreny was removed
+        //fix if currency was removed
         if (!isset($currencies[$this->current_currency])) {
             $this->current_currency = $this->default_currency;
         }
@@ -821,26 +841,62 @@ final class WPCS {
 
 
         $currencies = $this->get_currencies();
-
-        $precision = 2;
-        if (in_array($currency, $this->no_cents) OR $currencies[$currency]['hide_cents'] == 1) {
-            $precision = 0;
+        if (!isset($currencies[$currency])) {
+            $currency = $this->default_currency;
         }
 
         if ($currency != $this->default_currency) {
-            if ($currencies[$currency] != NULL) {
-                $price = number_format(floatval($price) * floatval($currencies[$currency]['rate']), $precision, $this->decimal_sep, $this->thousands_sep);
-            } else {
-                $price = number_format(floatval($price) * floatval($currencies[$this->default_currency]['rate']), $precision, $this->decimal_sep, $this->thousands_sep);
-            }
-        } else {
-            $price = number_format(floatval($price), $precision, $this->decimal_sep, $this->thousands_sep);
+            $price = floatval($price) * floatval($currencies[$currency]['rate']);
         }
 
         //http://stackoverflow.com/questions/11692770/rounding-to-nearest-50-cents
         //$price = round($price * 2, 0) / 2;
         //return round ( $price , 0 ,PHP_ROUND_HALF_EVEN );
-        return apply_filters('wpcs_price', $price);
+        return apply_filters('wpcs_price', $this->format_price_numeric($price, $currency));
+    }
+
+    public function format_price_numeric($price, $currency): string {
+        $currencies = $this->get_currencies();
+        $precision = 2;
+        if (isset($currencies[$currency]['decimals'])) {
+            $precision = $currencies[$currency]['decimals'];
+        }
+        if (in_array($currency, $this->no_cents) OR $currencies[$currency]['hide_cents'] == 1) {
+            $precision = 0;
+        }
+
+
+        $decimal_separator = $this->get_decimal_separator($currency);
+        $thousands_separator = $this->get_thousands_separator($currency);
+
+        $price = number_format(
+                (float) $price,
+                (int) $precision,
+                $decimal_separator,
+                $thousands_separator
+        );
+
+        return $price;
+    }
+
+    public function get_decimal_separator($currency): string {
+        $separators = array($this->decimal_sep, '.', ',', ',', '.', ',', '.');
+        $format = 0;
+        $currencies = $this->get_currencies();
+        if (isset($currencies[$currency]['format'])) {
+            $format = $currencies[$currency]['format'];
+        }
+        return $separators[$format] ?? $this->decimal_sep;
+    }
+
+    public function get_thousands_separator($currency): string {
+        $separators = array($this->thousands_sep, ',', '.', ' ', ' ', '', '');
+        $format = 0;
+        $currencies = $this->get_currencies();
+        if (isset($currencies[$currency]['format'])) {
+            $format = $currencies[$currency]['format'];
+        }
+        return $separators[$format] ?? $this->thousands_sep;
     }
 
     public function get_welcome_currency() {
@@ -982,7 +1038,8 @@ final class WPCS {
                     $tmp = explode(':', $v);
                     $fixed_values[$tmp[0]] = $tmp[1];
                 }
-                return $this->price_html(isset($fixed_values[$this->current_currency]) ? $fixed_values[$this->current_currency] : 'none', array('amount' => $value, 'as_is' => true, 'fixed_values' => $fixed_values));
+                return $this->price_html(isset($fixed_values[$this->current_currency]) ? $this->format_price_numeric($fixed_values[$this->current_currency], $this->current_currency) : 'none',
+                                array('amount' => $value, 'as_is' => true, 'fixed_values' => $fixed_values));
             } else {
                 return 'none';
             }
@@ -1003,14 +1060,8 @@ final class WPCS {
     //[wpcs_check_country]
     public function wpcs_check_country() {
         $data = array();
-        try {
-            $gi = $this->get_geoip_object();
-            $data['code'] = geoip_country_code_by_addr($gi, $_SERVER['REMOTE_ADDR']);
-            $data['name'] = geoip_country_name_by_addr($gi, $_SERVER['REMOTE_ADDR']);
-            geoip_close($gi);
-        } catch (Exception $e) {
-            $pd = '';
-        }
+        $data['code'] = $this->ipCountryResolver->getCountryCode();
+        $data['name'] = $this->ipCountryResolver->getCountryName();
 
         return $this->render_html(WPCS_PATH . 'views/shortcodes/wpcs_check_country.php', $data);
     }
@@ -1041,687 +1092,17 @@ final class WPCS {
         //***
         //http://en.wikipedia.org/wiki/ISO_4217
         $mode = $this->get_option('wpcs_currencies_aggregator', 'yahoo');
+        $to_currency = $this->escape($_REQUEST['currency_name']);
         $request = "";
-        //$wpcs_use_curl = (int) $this->get_option('wpcs_use_curl', 0);
-        $wpcs_use_curl = true;
-        switch ($mode) {
-            case 'yahoo':
-                $date = current_time('timestamp', true);
-                $yql_query_url = 'https://query1.finance.yahoo.com/v8/finance/chart/' . $this->default_currency . $this->escape($_REQUEST['currency_name']) . '=X?symbol=' . $this->default_currency . $this->escape($_REQUEST['currency_name']) . '%3DX&period1=' . ( $date - 60 * 86400 ) . '&period2=' . $date . '&interval=1d&includePrePost=false&events=div%7Csplit%7Cearn&lang=en-US&region=US&corsDomain=finance.yahoo.com';
-                if(function_exists('wp_remote_get')){
-					$response = wp_remote_get( $yql_query_url);
-					$res = wp_remote_retrieve_body( $response );				
-				}elseif (function_exists('curl_init') AND $wpcs_use_curl) {
-                    $res = $this->file_get_contents_curl($yql_query_url);
-                } else {
-                    $res = file_get_contents($yql_query_url);
-                }
-                //$yql_query_url="http://query.yahooapis.com/v1/public/yql?q=select+%2A+from+yahoo.finance.xchange+where+pair+in+EURGBP&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys";
-//***
-                $data = json_decode($res, true);
-                $result = isset($data['chart']['result'][0]['indicators']['quote'][0]['open']) ? $data['chart']['result'][0]['indicators']['quote'][0]['open'] : ( isset($data['chart']['result'][0]['meta']['previousClose']) ? array($data['chart']['result'][0]['meta']['previousClose']) : array() );
 
-                if (count($result) && is_array($result)) {
-                    $request = end($result);
-                }
-                break;
-
-            case 'google':
-                $amount = urlencode(1);
-                $from_Currency = urlencode($this->default_currency);
-                $to_Currency = urlencode($this->escape($_REQUEST['currency_name']));
-                if ($to_Currency == $from_Currency) {
-                    $request = 1;
-                    break;
-                }
-                $url = 'https://www.google.com/async/currency_update?yv=2&async=source_amount:1,source_currency:' . $from_Currency . ',target_currency:' . $to_Currency . ',chart_width:270,chart_height:94,lang:en,country:vn,_fmt:jspb';
-                if (function_exists('curl_init') AND $wpcs_use_curl) {
-                    $html = $this->file_get_contents_curl($url);
-                } else {
-                    $html = file_get_contents($url);
-                }
-
-                if ($html) {
-                    preg_match('/CurrencyUpdate\":\[\[(.+?)\,/', $html, $matches);
-
-                    if (count($matches) > 0) {
-                        $request = isset($matches[1]) ? $matches[1] : 1;
-                    } else {
-                        $request = sprintf(__("no data for %s", 'currency-switcher'), $this->escape($_REQUEST['currency_name']));
-                    }
-                }
-                break;
-
-            case 'appspot':
-                $url = 'http://rate-exchange.appspot.com/currency?from=' . $this->default_currency . '&to=' . $this->escape($_REQUEST['currency_name']);
-
-                if (function_exists('curl_init') AND $wpcs_use_curl) {
-                    $res = $this->file_get_contents_curl($url);
-                } else {
-                    $res = file_get_contents($url);
-                }
-
-
-                $res = json_decode($res);
-                if (isset($res->rate)) {
-                    $request = floatval($res->rate);
-                } else {
-                    $request = sprintf(__("no data for %s", 'currency-switcher'), $this->escape($_REQUEST['currency_name']));
-                }
-                break;
-
-            case 'privatbank':
-                //https://api.privatbank.ua/#p24/exchange
-                $url = 'https://api.privatbank.ua/p24api/pubinfo?json&exchange&coursid=4'; //4,5
-
-                if (function_exists('curl_init') AND $wpcs_use_curl) {
-                    $res = $this->file_get_contents_curl($url);
-                } else {
-                    $res = file_get_contents($url);
-                }
-
-                $currency_data = json_decode($res, true);
-                $rates = array();
-
-                if (!empty($currency_data)) {
-                    foreach ($currency_data as $c) {
-                        if ($c['base_ccy'] == 'UAH') {
-                            $rates[$c['ccy']] = floatval($c['sale']);
-                        }
-                    }
-                }
-
-
-                //***
-
-                if (!empty($rates)) {
-
-                    if ($this->default_currency != 'UAH') {
-                        if ($_REQUEST['currency_name'] != 'UAH') {
-                            if (isset($_REQUEST['currency_name'])) {
-                                $request = floatval($rates[$this->default_currency] / ($rates[$this->escape($_REQUEST['currency_name'])]));
-                            } else {
-                                $request = sprintf(__("no data for %s", 'currency-switcher'), $this->escape($_REQUEST['currency_name']));
-                            }
-                        } else {
-                            $request = 1 / (1 / $rates[$this->default_currency]);
-                        }
-                    } else {
-                        if ($_REQUEST['currency_name'] != 'UAH') {
-                            $request = 1 / $rates[$_REQUEST['currency_name']];
-                        } else {
-                            $request = 1;
-                        }
-                    }
-                } else {
-                    $request = sprintf(__("no data for %s", 'currency-switcher'), $this->escape($_REQUEST['currency_name']));
-                }
-
-                //***
-
-                if (!$request) {
-                    $request = sprintf(__("no data for %s", 'currency-switcher'), $this->escape($_REQUEST['currency_name']));
-                }
-
-
-                break;
-
-            case 'ecb':
-                $url = 'http://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml';
-
-                if (function_exists('curl_init') AND $wpcs_use_curl) {
-                    $res = $this->file_get_contents_curl($url);
-                } else {
-                    $res = file_get_contents($url);
-                }
-
-                $currency_data = simplexml_load_string($res);
-                $rates = array();
-                if (empty($currency_data->Cube->Cube)) {
-                    $request = sprintf(__("no data for %s", 'currency-switcher'), $this->escape($_REQUEST['currency_name']));
-                    break;
-                }
-
-
-
-                foreach ($currency_data->Cube->Cube->Cube as $xml) {
-                    $att = (array) $xml->attributes();
-                    $rates[$att['@attributes']['currency']] = floatval($att['@attributes']['rate']);
-                }
-
-
-                //***
-
-                if (!empty($rates)) {
-
-                    if ($this->default_currency != 'EUR') {
-                        if ($_REQUEST['currency_name'] != 'EUR') {
-                            if (isset($_REQUEST['currency_name'])) {
-                                $request = floatval($rates[$this->escape($_REQUEST['currency_name'])] / $rates[$this->default_currency]);
-                            } else {
-                                $request = sprintf(__("no data for %s", 'currency-switcher'), $this->escape($_REQUEST['currency_name']));
-                            }
-                        } else {
-                            $request = 1 / $rates[$this->default_currency];
-                        }
-                    } else {
-                        if ($_REQUEST['currency_name'] != 'EUR') {
-                            if ($rates[$_REQUEST['currency_name']] < 1) {
-                                $request = 1 / $rates[$_REQUEST['currency_name']];
-                            } else {
-                                $request = $rates[$_REQUEST['currency_name']];
-                            }
-                        } else {
-                            $request = 1;
-                        }
-                    }
-                } else {
-                    $request = sprintf(__("no data for %s", 'currency-switcher'), $this->escape($_REQUEST['currency_name']));
-                }
-
-                //***
-
-                if (!$request) {
-                    $request = sprintf(__("no data for %s", 'currency-switcher'), $this->escape($_REQUEST['currency_name']));
-                }
-
-
-                break;
-            case 'free_ecb':
-//***           https://api.exchangeratesapi.io/latest?base=USD&symbols=GBP
-                $ex_currency = $this->escape($_REQUEST['currency_name']);
-                $query_url = 'https://api.exchangeratesapi.io/latest?base=' . $this->default_currency . '&symbols=' . $ex_currency;
-                if (function_exists('curl_init') AND $wpcs_use_curl) {
-                    $res = $this->file_get_contents_curl($query_url);
-                } else {
-                    $res = file_get_contents($query_url);
-                }
-//***
-                $data = json_decode($res, true);
-                $request = isset($data['rates'][$ex_currency]) ? $data['rates'][$ex_currency] : 0;
-
-                if (!$request) {
-                    $request = sprintf(esc_html__("no data for %s", 'currency-switcher'), $this->escape($_REQUEST['currency_name']));
-                }
-                break;
-            case 'micro':
-                //https://ratesapi.io/api/latest?base=USD&symbols=INR
-                $ex_currency = $this->escape($_REQUEST['currency_name']);
-                $query_url = 'https://ratesapi.io/api/latest?base=' . $this->default_currency . '&symbols=' . $ex_currency;
-                if (function_exists('curl_init') AND $wpcs_use_curl) {
-                    $res = $this->file_get_contents_curl($query_url);
-                } else {
-                    $res = file_get_contents($query_url);
-                }
-//***
-                $data = json_decode($res, true);
-                $request = isset($data['rates'][$ex_currency]) ? $data['rates'][$ex_currency] : 0;
-
-                if (!$request) {
-                    $request = sprintf(esc_html__("no data for %s", 'currency-switcher'), $this->escape($_REQUEST['currency_name']));
-                }
-                break;
-            case 'rf':
-                //http://www.cbr.ru/scripts/XML_daily_eng.asp?date_req=21/08/2015
-                $xml_url = 'http://www.cbr.ru/scripts/XML_daily_eng.asp?date_req='; //21/08/2015
-                $date = date('d/m/Y');
-                $xml_url .= $date;
-                if (function_exists('curl_init')) {
-                    $res = $this->file_get_contents_curl($xml_url);
-                } else {
-                    $res = file_get_contents($xml_url);
-                }
-//***
-                $xml = simplexml_load_string($res) or die("Error: Cannot create object");
-                $xml = $this->object2array($xml);
-                $rates = array();
-                $nominal = array();
-//***
-                if (isset($xml['Valute'])) {
-                    if (!empty($xml['Valute'])) {
-                        foreach ($xml['Valute'] as $value) {
-                            $rates[$value['CharCode']] = floatval(str_replace(',', '.', $value['Value']));
-                            $nominal[$value['CharCode']] = $value['Nominal'];
-                        }
-                    }
-                }
-//***
-                if (!empty($rates)) {
-                    if ($this->default_currency != 'RUB') {
-                        if ($_REQUEST['currency_name'] != 'RUB') {
-                            if (isset($_REQUEST['currency_name'])) {
-                                $request = $nominal[$this->escape($_REQUEST['currency_name'])] * floatval($rates[$this->default_currency] / $rates[$this->escape($_REQUEST['currency_name'])] / $nominal[$this->escape($this->default_currency)]);
-                            } else {
-                                $request = sprintf(__("no data for %s", 'currency-switcher'), $this->escape($_REQUEST['currency_name']));
-                            }
-                        } else {
-                            if ($nominal[$this->default_currency] == 10) {
-                                $request = (1 / (1 / $rates[$this->default_currency])) / $nominal[$this->default_currency];
-                            } else {
-                                $request = 1 / (1 / $rates[$this->default_currency]);
-                            }
-                        }
-                    } else {
-                        if ($_REQUEST['currency_name'] != 'RUB') {
-                            $request = $nominal[$this->escape($_REQUEST['currency_name'])] / $rates[$_REQUEST['currency_name']];
-                        } else {
-                            $request = 1;
-                        }
-                    }
-                } else {
-                    $request = sprintf(__("no data for %s", 'currency-switcher'), $this->escape($_REQUEST['currency_name']));
-                }
-
-                //***
-
-                if (!$request) {
-                    $request = sprintf(__("no data for %s", 'currency-switcher'), $this->escape($_REQUEST['currency_name']));
-                }
-
-                break;
-
-            case 'bank_polski':
-                //http://api.nbp.pl/en.html
-                $url = 'http://api.nbp.pl/api/exchangerates/tables/A'; //A,B
-
-                if (function_exists('curl_init')) {
-                    $res = $this->file_get_contents_curl($url);
-                } else {
-                    $res = file_get_contents($url);
-                }
-
-                $currency_data = json_decode($res, TRUE);
-                $rates = array();
-                if (!empty($currency_data[0])) {
-                    foreach ($currency_data[0]['rates'] as $c) {
-                        $rates[$c['code']] = floatval($c['mid']);
-                    }
-                }
-
-                //***
-
-                if (!empty($rates)) {
-
-                    if ($this->default_currency != 'PLN') {
-                        if ($_REQUEST['currency_name'] != 'PLN') {
-                            if (isset($_REQUEST['currency_name']) && $rates[$this->escape($_REQUEST['currency_name'])] != 0 ) {
-                                $request = floatval($rates[$this->default_currency] / ($rates[$this->escape($_REQUEST['currency_name'])]));
-                            } else {
-                                $request = sprintf(__("no data for %s", 'currency-switcher'), $this->escape($_REQUEST['currency_name']));
-                            }
-                        } else {
-                            $request = 1 / (1 / $rates[$this->default_currency]);
-                        }
-                    } else {
-                        if ($_REQUEST['currency_name'] != 'PLN') {
-                            $request = 1 / $rates[$_REQUEST['currency_name']];
-                        } else {
-                            $request = 1;
-                        }
-                    }
-                } else {
-                    $request = sprintf(__("no data for %s", 'currency-switcher'), $this->escape($_REQUEST['currency_name']));
-                }
-
-                //***
-
-                if (!$request) {
-                    $request = sprintf(__("no data for %s", 'currency-switcher'), $this->escape($_REQUEST['currency_name']));
-                }
-
-
-                break;
-
-            case 'free_converter':
-                $from_Currency = urlencode($this->default_currency);
-                $to_Currency = urlencode($this->escape($_REQUEST['currency_name']));
-                $query_str = sprintf("%s_%s", $from_Currency, $to_Currency);
-                $key = $this->get_option('wpcs_aggregator_key', '');
-                if (!$key) {
-                    $request = esc_html__("Please use the API key", 'currency-switcher');
-                    break;
-                }
-                $url = "http://free.currencyconverterapi.com/api/v3/convert?q={$query_str}&compact=y&apiKey={$key}";
-
-                if (function_exists('curl_init') AND $wpcs_use_curl) {
-                    $res = $this->file_get_contents_curl($url);
-                } else {
-                    $res = file_get_contents($url);
-                }
-
-                $currency_data = json_decode($res, true);
-
-                if (!empty($currency_data[$query_str]['val'])) {
-                    $request = $currency_data[$query_str]['val'];
-                } else {
-                    $request = sprintf(esc_html__("no data for %s", 'currency-switcher'), $this->escape($_REQUEST['currency_name']));
-                }
-
-                //***
-
-                if (!$request) {
-                    $request = sprintf(esc_html__("no data for %s", 'currency-switcher'), $this->escape($_REQUEST['currency_name']));
-                }
-                break;
-            case 'fixer':
-                $from_Currency = urlencode($this->default_currency);
-                $to_Currency = urlencode($this->escape($_REQUEST['currency_name']));
-
-                $key = $this->get_option('wpcs_aggregator_key', '');
-                if (!$key) {
-                    $request = esc_html__("Please use the API key", 'currency-switcher');
-                    break;
-                }
-                $url = "http://data.fixer.io/api/latest?base={$from_Currency}&symbolst={$to_Currency}&access_key={$key}";
-
-                if (function_exists('curl_init') AND $wpcs_use_curl) {
-                    $res = $this->file_get_contents_curl($url);
-                } else {
-                    $res = file_get_contents($url);
-                }
-
-                $currency_data = json_decode($res, true);
-
-                $request = isset($currency_data['rates'][$to_Currency]) ? $currency_data['rates'][$to_Currency] : 0;
-
-                if (!$request) {
-                    $request = sprintf(esc_html__("no data for %s", 'currency-switcher'), $this->escape($_REQUEST['currency_name']));
-                }
-                break;
-            case"cryptocompare":
-                $from_Currency = urlencode($this->default_currency);
-                $to_Currency = urlencode($this->escape($_REQUEST['currency_name']));
-                //https://min-api.cryptocompare.com/data/price?fsym=ETH&tsyms=BTC
-                $query_str = sprintf("?fsym=%s&tsyms=%s", $from_Currency, $to_Currency);
-                $url = "https://min-api.cryptocompare.com/data/price" . $query_str;
-                if (function_exists('curl_init')) {
-                    $res = $this->file_get_contents_curl($url);
-                } else {
-                    $res = file_get_contents($url);
-                }
-                $currency_data = json_decode($res, true);
-                if (!empty($currency_data[$to_Currency])) {
-                    $request = $currency_data[$to_Currency];
-                } else {
-                    $request = sprintf(__("no data for %s", 'currency-switcher'), $this->escape($_REQUEST['currency_name']));
-                }
-                //***
-                if (!$request) {
-                    $request = sprintf(__("no data for %s", 'currency-switcher'), $this->escape($_REQUEST['currency_name']));
-                }
-                break;
-            case 'xe':
-                $amount = urlencode(1);
-                $from_Currency = urlencode($this->default_currency);
-                $to_Currency = urlencode($this->escape($_REQUEST['currency_name']));
-                //http://www.xe.com/currencyconverter/convert/?Amount=1&From=ZWD&To=CUP
-                $url = "https://www.xe.com/currencyconverter/convert/?Amount=1&From=" . $from_Currency . "&To=" . $to_Currency;
-                if (function_exists('curl_init')) {
-                    $html = $this->file_get_contents_curl($url);
-                } else {
-                    $html = file_get_contents($url);
-                }
-                //test
-                var_dump($html);
-                preg_match_all('/<span class="converterresult-toAmount">(.*?)<\/span>/s', $html, $matches);
-                if (isset($matches[1][0])) {
-                    $request = floatval(str_replace(",", "", $matches[1][0]));
-                } else {
-                    $request = sprintf(__("no data for %s", 'currency-switcher'), $this->escape($_REQUEST['currency_name']));
-                }
-
-                break;
-            case 'ron':
-                // thank you, Maleabil
-                $url = 'https://www.bnr.ro/nbrfxrates.xml';
-                if (function_exists('curl_init') AND $wpcs_use_curl) {
-                    $res = $this->file_get_contents_curl($url);
-                } else {
-                    $res = file_get_contents($url);
-                }
-                $currency_data = simplexml_load_string($res);
-                $rates = array();
-                if (empty($currency_data->Body->Cube)) {
-                    $request = sprintf(__("no data for %s", 'currency-switcher'), $this->escape($_REQUEST['currency_name']));
-                    break;
-                }
-                foreach ($currency_data->Body->Cube->Rate as $xml) {
-                    $att = (array) $xml->attributes();
-                    $final['rate'] = (string) $xml;
-                    $rates[$att['@attributes']['currency']] = floatval($final['rate']);
-                }
-                //***
-                if (!empty($rates)) {
-                    if ($this->default_currency != 'RON') {
-                        if ($_REQUEST['currency_name'] != 'RON') {
-                            if (isset($_REQUEST['currency_name'])) {
-                                $request = 1 / floatval($rates[$this->escape($_REQUEST['currency_name'])] / $rates[$this->default_currency]);
-                            } else {
-                                $request = sprintf(__("no data for %s", 'currency-switcher'), $this->escape($_REQUEST['currency_name']));
-                            }
-                        } else {
-                            $request = 1 * ($rates[$this->default_currency]);
-                        }
-                    } else {
-                        if ($_REQUEST['currency_name'] != 'RON') {
-                            if ($rates[$_REQUEST['currency_name']] < 1) {
-                                $request = 1 / $rates[$_REQUEST['currency_name']];
-                            } else {
-                                $request = $rates[$_REQUEST['currency_name']];
-                            }
-                        } else {
-                            $request = 1;
-                        }
-                    }
-                } else {
-                    $request = sprintf(__("no data for %s", 'currency-switcher'), $this->escape($_REQUEST['currency_name']));
-                }
-                //***
-
-                if (!$request) {
-                    $request = sprintf(__("no data for %s", 'currency-switcher'), $this->escape($_REQUEST['currency_name']));
-                }
-                break;
-            case 'currencylayer':
-                $from_Currency = urlencode($this->default_currency);
-                $to_Currency = urlencode($this->escape($_REQUEST['currency_name']));
-
-                $key = $this->get_option('wpcs_aggregator_key', '');
-                if (!$key) {
-                    $request = esc_html__("Please use the API key", 'currency-switcher');
-                    break;
-                }
-
-
-                $url = "http://apilayer.net/api/live?source={$from_Currency}&currencies={$to_Currency}&access_key={$key}&format=1";
-
-                if (function_exists('curl_init') AND $wpcs_use_curl) {
-                    $res = $this->file_get_contents_curl($url);
-                } else {
-                    $res = file_get_contents($url);
-                }
-
-                $currency_data = json_decode($res, true);
-
-                $rates = isset($currency_data['quotes']) ? $currency_data['quotes'] : 0;
-                $request = isset($rates[$from_Currency . $to_Currency]) ? $rates[$from_Currency . $to_Currency] : 0;
-                if (!$request) {
-                    $request = sprintf(esc_html__("no data for %s", 'currency-switcher'), $this->escape($_REQUEST['currency_name']));
-                }
-                break;
-            case 'openexchangerates':
-                $from_Currency = urlencode($this->default_currency);
-                $to_Currency = urlencode($this->escape($_REQUEST['currency_name']));
-
-                $key = $this->get_option('wpcs_aggregator_key', '');
-                if (!$key) {
-                    $request = esc_html__("Please use the API key", 'currency-switcher');
-                    break;
-                }
-
-                $url = "https://openexchangerates.org/api/latest.json?base={$from_Currency}&symbolst={$to_Currency}&app_id={$key}";
-
-                if (function_exists('curl_init') AND $wpcs_use_curl) {
-                    $res = $this->file_get_contents_curl($url);
-                } else {
-                    $res = file_get_contents($url);
-                }
-
-                $currency_data = json_decode($res, true);
-
-                $request = isset($currency_data['rates'][$to_Currency]) ? $currency_data['rates'][$to_Currency] : 0;
-
-                if (!$request) {
-                    $request = sprintf(esc_html__("no data for %s", 'currency-switcher'), $this->escape($_REQUEST['currency_name']));
-                }
-                break;
-            case 'ukrnatsbank':
-//***
-                $natbank_url = 'https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?json';
-                if (function_exists('curl_init') AND $wpcs_use_curl) {
-                    $res = $this->file_get_contents_curl($natbank_url);
-                } else {
-                    $res = file_get_contents($natbank_url);
-                }
-
-//***
-                $data = json_decode($res, true);
-
-                if (!empty($data)) {
-                    if ($this->default_currency != 'UAH') {
-
-                        $def_cur_rate = 0;
-                        foreach ($data as $item) {
-                            if ($item["cc"] == $this->default_currency) {
-                                $def_cur_rate = $item["rate"];
-                                break;
-                            }
-                        }
-                        if (!$def_cur_rate) {
-                            $request = sprintf(__("no data for %s", 'currency-switcher'), $this->escape($_REQUEST['currency_name']));
-                            break;
-                        } elseif ($_REQUEST['currency_name'] == 'UAH') {
-                            $request = 1 * $def_cur_rate;
-                        }
-                        foreach ($data as $item) {
-                            if ($item["cc"] == $_REQUEST['currency_name']) {
-                                if ($_REQUEST['currency_name'] != 'UAH') {
-                                    if (isset($_REQUEST['currency_name'])) {
-                                        $request = 1 / floatval($item["rate"] / $def_cur_rate);
-                                    } else {
-                                        $request = sprintf(__("no data for %s", 'currency-switcher'), $this->escape($_REQUEST['currency_name']));
-                                    }
-                                } else {
-                                    $request = 1 * $def_cur_rate;
-                                }
-                            }
-                        }
-                    } else {
-                        if ($_REQUEST['currency_name'] != 'UAH') {
-                            foreach ($data as $item) {
-                                if ($item["cc"] == $_REQUEST['currency_name']) {
-                                    $request = 1 / $item["rate"];
-                                    break;
-                                }
-                            }
-                        } else {
-                            $request = 1;
-                        }
-                    }
-                }
-                if (!$request) {
-                    $request = sprintf(__("no data for %s", 'currency-switcher'), $this->escape($_REQUEST['currency_name']));
-                }
-                break;
-            case 'bnm':
-                $url = sprintf('http://www.bnm.md/en/official_exchange_rates?get_xml=1&date=%s', date('d.m.Y'));
-
-                if (function_exists('curl_init') AND $wpcs_use_curl) {
-                    $res = $this->file_get_contents_curl($url);
-                } else {
-                    $res = file_get_contents($url);
-                }
-
-                $currencies_data = simplexml_load_string($res);
-                if (isset($currencies_data->Valute)) {
-
-                    $rate1 = 0;
-                    $rate2 = 0;
-                    if ('MDL' == $_REQUEST['currency_name']) {
-                        $rate2 = 1;
-                    }
-                    foreach ($currencies_data->Valute as $xml_item) {
-                        if ($xml_item->CharCode == $_REQUEST['currency_name'] && 'MDL' != $_REQUEST['currency_name']) {
-                            $rate2 = $xml_item->Nominal / $xml_item->Value;
-                        }
-                        if ($xml_item->CharCode == $this->default_currency && 'MDL' != $this->default_currency) {
-                            $rate1 = $xml_item->Nominal / $xml_item->Value;
-                        }
-                    }
-                    if ('MDL' == $this->default_currency && $rate2) {
-                        $request = $rate2;
-                    } elseif ($rate2 && $rate1) {
-                        $request = $rate2 / $rate1;
-                    } else {
-                        $request = sprintf(esc_html__("no data for %s", 'currency-switcher'), $this->escape($_REQUEST['currency_name']));
-                    }
-                }
-                break;
-            case 'mnb':
-                $client = new SoapClient('http://www.mnb.hu/arfolyamok.asmx?wsdl');
-                $xml = simplexml_load_string($client->GetCurrentExchangeRates(null)->GetCurrentExchangeRatesResult);
-                $rate_base = 0;
-                $rate_curr = 0;
-                if ('HUF' == $_REQUEST['currency_name']) {
-                    $rate_curr = 1;
-                }
-                foreach ($xml->Day->Rate as $rate) {
-                    if ((string) $rate->attributes()->curr == $this->default_currency && 'HUF' != $this->default_currency) {
-                        $rate_base = (int) $rate->attributes()->unit / (float) str_replace(',', '.', $rate);
-                    }
-                    if ((string) $rate->attributes()->curr == $_REQUEST['currency_name'] && 'HUF' != $_REQUEST['currency_name']) {
-                        $rate_curr = (int) $rate->attributes()->unit / (float) str_replace(',', '.', $rate);
-                    }
-                }
-                if ('HUF' == $this->default_currency && $rate_curr) {
-                    $request = $rate_curr;
-                } elseif ($rate_base && $rate_curr) {
-                    $request = $rate_curr / $rate_base;
-                } else {
-                    $request = sprintf(esc_html__("no data for %s", 'currency-switcher'), $this->escape($_REQUEST['currency_name']));
-                }
-
-                break;
-            case 'currencyapi':
-                $key = $this->get_option('wpcs_aggregator_key', '');
-
-                $from_Currency = urlencode($this->default_currency);
-                $to_Currency = urlencode($this->escape($_REQUEST['currency_name']));
-                if (!$key) {
-                    $request = esc_html__("Please use the API key", 'currency-switcher');
-                    break;
-                }
-                $curr_url = 'https://api.currencyapi.com/v3/latest?apikey=' . $key . '&base_currency=' . $from_Currency . '&currencies=' . $to_Currency;
-                if (function_exists('curl_init') AND $wpcs_use_curl) {
-                    $res = $this->file_get_contents_curl($curr_url);
-                } else {
-                    $res = file_get_contents($curr_url);
-                }
-
-                $data = json_decode($res, true);
-
-                if (isset($data['data']) && isset($data['data'][$to_Currency])) {
-                    $request = $data['data'][$to_Currency]['value'];
-                }
-                if (!$request) {
-                    $request = sprintf(esc_html__("no data for %s", 'currency-switcher'), $to_Currency);
-                }
-                break;
-            default:
-
-                $request = apply_filters('wpcs_add_aggregator_processor', $mode, $this->escape($_REQUEST['currency_name']));
-
-                break;
+        $rate_provider = $this->get_rate_provider($mode);
+        if ($rate_provider) {
+            $request = $rate_provider->getRate($to_currency);
+            if ($request < 0) {
+                $request = $rate_provider->getLastError();
+            }
+        } else {
+            $request = apply_filters('wpcs_add_aggregator_processor', $mode, $to_currency);
         }
 
 
@@ -1795,6 +1176,7 @@ final class WPCS {
         include($pagepath);
         return ob_get_clean();
     }
+
     public function render_html_e($pagepath, $data = array()) {
         if (isset($data['pagepath'])) {
             unset($data['pagepath']);
@@ -1802,6 +1184,7 @@ final class WPCS {
         @extract($data);
         include($pagepath);
     }
+
     public function wpcs_code_rate($atts) {
         $code = strtoupper($atts['code']);
         $currencies = $this->get_currencies();
@@ -1849,8 +1232,8 @@ final class WPCS {
         if ($this->get_option('wpcs_price_info', 0) AND !(is_admin() AND !isset($_REQUEST['get_product_price_by_ajax']))) {
 
             $info = "<ul class='wpcs_price_info_list'>";
-            $price = str_replace($this->thousands_sep, "", $price);
-            $price = str_replace($this->decimal_sep, ".", $price);
+            $price = str_replace($this->get_thousands_separator($currency), "", $price);
+            $price = str_replace($this->get_decimal_separator($currency), ".", $price);
             $price_in_default_curr = $this->back_convert($price, $currencies[$this->current_currency]['rate'], 2);
 
             foreach ($currencies as $сurr) {
@@ -1886,8 +1269,7 @@ final class WPCS {
     public function wpcs_exchange_value($value) {
         $currencies = $this->get_currencies();
         $value = $value * $currencies[$this->current_currency]['rate'];
-        $value = number_format($value, 2, $this->decimal_sep, '');
-        return $value;
+        return $this->format_price_numeric($value, $this->current_currency);
     }
 
     //set it to default
@@ -1907,7 +1289,11 @@ final class WPCS {
         if (in_array($to, $this->no_cents)) {
             $precision = 0;
         }
-        return number_format($v * $amount, intval($precision), $this->decimal_sep, $this->thousands_sep);
+        return number_format(
+                $v * $amount,
+                intval($precision),
+                $this->get_decimal_separator($to),
+                $this->get_thousands_separator($to));
     }
 
     //ajax
@@ -1917,8 +1303,8 @@ final class WPCS {
         if (!isset($currencies[$currency])) {
             $currency = $this->default_currency;
         }
-        
-        $excluded_currenies=[];
+
+        $excluded_currenies = [];
 
         if (!empty($_REQUEST['exclude'])) {
             $excluded_currenies = array_intersect(array_keys($currencies), explode(',', sanitize_text_field($_REQUEST['exclude'])));
@@ -1960,7 +1346,9 @@ final class WPCS {
                         if (in_array($this->current_currency, $this->no_cents) OR $currencies[$this->current_currency]['hide_cents'] == 1) {
                             $precision = 0;
                         }
-                        $result[$d['id']] = $this->price_html(isset($fixed_values[$this->current_currency]) ? number_format(floatval($fixed_values[$this->current_currency]), $precision, $this->decimal_sep, $this->thousands_sep) : 'none', array('amount' => $d['price'], 'as_is' => true, 'fixed_values' => $fixed_values));
+                        $result[$d['id']] = $this->price_html(
+                                isset($fixed_values[$this->current_currency]) ? $this->format_price_numeric(floatval($fixed_values[$this->current_currency]), $this->current_currency) : 'none',
+                                array('amount' => $d['price'], 'as_is' => true, 'fixed_values' => $fixed_values));
                     } else {
                         $result[$d['id']] = $this->price_html($this->price($d['price']), array('amount' => $d['price']));
                     }
@@ -1974,6 +1362,18 @@ final class WPCS {
         wp_die(json_encode($data));
     }
 
+    private function get_rate_provider($mode) { // TODO  for php < 8.0 :null|Pluginus\CurrencySwitcher\Rates\Aggregators;
+        $rate_provider = null;
+        $key = $this->get_option('wpcs_aggregator_key', '');
+        $class_name = 'Pluginus\CurrencySwitcher\Rates\Aggregators\\' . ucfirst($mode) . 'RateProvider';
+
+        if (class_exists($class_name)) {
+            $rate_provider = new $class_name($this->default_currency, $key);
+        }
+
+        return $rate_provider;
+    }
+
     //count amount in basic currency from any currency
     public function back_convert($amount, $rate, $precision = 4) {
         if ($rate > 0) {
@@ -1985,6 +1385,19 @@ final class WPCS {
 
     public function escape($value) {
         return sanitize_text_field(esc_html($value));
+    }
+
+    public function draw_upload_btn() {
+        ob_start();
+        ?>
+        <button class="button button-primary wpcs_download_db" >
+            <span class="dashicons dashicons-image-rotate"></span>
+            <span class="wpcs_download_db_text"> <?php esc_html_e('Update/Download DB', 'currency-switcher'); ?></span>
+            <span class="wpcs_download_db_text_done"> <?php esc_html_e('Updated!', 'currency-switcher'); ?></span>
+            <span class="wpcs_download_db_text_error"> <?php esc_html_e('Error!', 'currency-switcher'); ?></span>
+        </button>
+        <?php
+        return ob_get_clean();
     }
 
     public function write_log($message) {
@@ -2040,7 +1453,7 @@ final class WPCS {
             <div class="notice notice-info" id="pn_<?php echo esc_attr($slug) ?>_ask_favour" style="position: relative;">
                 <button onclick="javascript: pn_<?php echo esc_attr($slug) ?>_dismiss_review(1); void(0);" title="<?php esc_html_e('Later', 'currency-switcher'); ?>" class="notice-dismiss"></button>
                 <div id="pn_<?php echo esc_attr($slug) ?>_review_suggestion">
-                    <p><?php esc_html_e('Hi! Are you enjoying using <i>WPCS - WordPress Currency Switcher</i>?', 'currency-switcher'); ?></p>
+                    <p><?php esc_html_e('Hi! Are you enjoying using WPCS - WordPress Currency Switcher?', 'currency-switcher'); ?></p>
                     <p><a href="javascript: pn_<?php echo esc_attr($slug) ?>_set_review(1); void(0);"><?php esc_html_e('Yes, I love it', 'currency-switcher'); ?></a> 🙂 | <a href="javascript: pn_<?php echo esc_attr($slug) ?>_set_review(0); void(0);"><?php esc_html_e('Not really...', 'currency-switcher'); ?></a></p>
                 </div>
 

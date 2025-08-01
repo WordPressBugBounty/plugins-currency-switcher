@@ -1559,4 +1559,26 @@ input[type=text], input[type=time], input[type=url], input[type=week],
     left: -2px;
 }
 
+@keyframes spin {
+    100% { transform: rotate(360deg); }
+}
 
+.dashicons.spin {
+    animation: spin 1s linear infinite;
+}
+.wpcs_download_db_text_done, .wpcs_download_db_text_error{
+    display: none;
+}
+.wpcs_download_db_text_done{
+    color: #2eca8b;
+}
+.wpcs_download_db_text_error{
+    color: #ff6347;
+}
+.wpcs_download_db span.dashicons{
+    vertical-align: middle;
+}
+.wpcs-description button.wpcs_download_db{
+    display: block;
+    margin-top: 10px;
+}

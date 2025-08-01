@@ -224,7 +224,7 @@ msgstr ""
 
 #. Text in echo
 #: currency-switcher/index.php:1777
-msgid "Hi! Are you enjoying using <i>WPCS - WordPress Currency Switcher</i>?"
+msgid "Hi! Are you enjoying using WPCS - WordPress Currency Switcher?"
 msgstr ""
 
 #. Text in function

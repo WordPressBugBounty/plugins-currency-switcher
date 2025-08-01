@@ -8,39 +8,30 @@ if (!empty($currencies) AND is_array($currencies)) {
 }
 
 if ($this->is_use_geo_rules()) {
-    $gi = $this->get_geoip_object();
-    //include_once WPCS_PATH .'lib/geo-ip/geoip.inc';
-    //$gi = geoip_open(WPCS_PATH .'lib/GeoIP.dat', GEOIP_MEMORY_CACHE);
-    $countries = array();
-    foreach ($gi->GEOIP_COUNTRY_CODE_TO_NUMBER as $key => $var) {
-        if ($var === 0 OR empty($key))
-            continue;
-        $countries[$key] = $gi->GEOIP_COUNTRY_NAMES[$var];
-    }
-    geoip_close($gi);
+	$countries = $this->countryRepository->getCountriesList();
 }
 
 $aggregators = array(
-    'yahoo' => __('http://finance.yahoo.com', 'currency-switcher'),
-	'currencyapi' => 'Сurrencyapi',
-    //'google' => __('http://google.com/finance', 'currency-switcher'),
-    'free_ecb' => 'The Free Currency Converter by European Central Bank',
-    'micro' => 'Micro pyramid',
-    'rf' => __('http://www.cbr.ru - russian centrobank', 'currency-switcher'),
-    'privatbank' => 'api.privatbank.ua - ukrainian privatbank',
-    'ukrnatsbank' => 'Ukrainian national bank',
-    'bank_polski' => 'Narodowy Bank Polsky',
-    'free_converter' => 'The Free Currency Converter',
-    'fixer' => 'Fixer',
-    'cryptocompare' => 'CryptoCompare',
-    //'xe' => 'XE Currency Converter'
-    'ron' => 'www.bnr.ro',
-    'currencylayer' => 'Сurrencylayer',
-    'openexchangerates' => 'Open exchange rates',
-	'bnm' => 'National Bank of Moldova',
-	'mnb' => 'Magyar Nemzeti Bank',
+    'yahoo' => esc_html__('http://finance.yahoo.com', 'currency-switcher'),
+	'currencyapi' => esc_html__('Сurrencyapi', 'currency-switcher'),
+	'openexchangerates' => esc_html__('Open exchange rates', 'currency-switcher'),
+	'currencylayer' => esc_html__('Сurrencylayer', 'currency-switcher'),
+	'fixer' => esc_html__('Fixer', 'currency-switcher'),
+	'cryptocompare' => esc_html__('CryptoCompare', 'currency-switcher'),
+	'ecb' => esc_html__('www.ecb.europa.eu', 'currency-switcher'),
+	'privatbank' => esc_html__('api.privatbank.ua - ukrainian privatbank', 'currency-switcher'),
+	'ukrnatsbank' => esc_html__('Ukrainian national bank', 'currency-switcher'),
+	'bank_polski' => esc_html__('Narodowy Bank Polsky', 'currency-switcher'),
+	'bnm' => esc_html__('National Bank of Moldova', 'currency-switcher'),
+	'ron' => esc_html__('www.bnr.ro', 'currency-switcher'),
+	'mnb' => esc_html__('Magyar Nemzeti Bank', 'currency-switcher'),
+	'rf' => esc_html__('http://www.cbr.ru - russian centrobank', 'currency-switcher'),
 );
+
+
 $aggregators = apply_filters('wpcs_announce_aggregator', $aggregators);
+
+
 //+++
 $options = array(
     array(
@@ -155,8 +146,9 @@ $options = array(
         'class' => 'chosen_select',
         'css' => 'min-width:300px;',
         'options' => array(
-            'session' => __('session', 'currency-switcher'),
-            'transient' => __('transient', 'currency-switcher')
+            'session' => esc_html__('session', 'currency-switcher'),
+            'transient' => esc_html__('transient', 'currency-switcher'),
+            'cookie' => esc_html__('cookie', 'currency-switcher')
         ),
         'default' => 'transient'
     ),
@@ -173,6 +165,32 @@ $options = array(
         ),
         'default' => 0
     ),
+	array(
+        'name' => esc_html__('Geo position', 'currency-switcher'),
+        'desc' => esc_html__('Select library for getting geo position', 'currency-switcher'),
+        'id' => 'wpcs_geo_library',
+        'type' => 'select',
+        'class' => 'chosen_select',
+        'css' => 'min-width:300px;',
+        'options' => array(
+            'open_geo_ip' => esc_html__('Open Geo IP', 'currency-switcher'),
+            'geo_ip2' => esc_html__('GeoIP2 (MaxMind API key is required)', 'currency-switcher')
+        ),
+        'default' => 'open_geo_ip'
+    ),
+    array(
+        'name' => esc_html__('MaxMind license key', 'currency-switcher'),
+        'desc' => esc_html__('Without API key GeoIP2 won\'t work. After logging into your account MaxMind, '
+				. 'go to the "Manage License Keys" section and click "Generate new license key - "', 'currency-switcher') 
+				. 'https://www.maxmind.com/en/geolite2/signup'
+				. $this->draw_upload_btn(),
+        'id' => 'wpcs_geo_library_key',
+		'class' => 'wpcs_geo_library_key',
+        'type' => 'text',
+        'css' => 'min-width:500px;',
+        'default' => ''
+    ),	
+
 //              array(
 //              'name' => __('Use GeoLocation', 'currency-switcher'),
 //              'desc' => __('Use GeoLocation rules for your currencies.', 'currency-switcher'),

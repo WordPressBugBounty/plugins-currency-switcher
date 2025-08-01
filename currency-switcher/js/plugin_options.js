@@ -467,6 +467,63 @@ function wpcs_hide_stat_info_popup() {
     }, 500);
 }
 
+function wpcs_check_geo_library_change(){
+    const value = jQuery('select[name="wpcs_settings[wpcs_geo_library]"]').val();
+    if (value == 'geo_ip2') {
+        jQuery('.wpcs_geo_library_key').parents('.wpcs-control-section').show();
+    } else {
+        jQuery('.wpcs_geo_library_key').parents('.wpcs-control-section').hide();
+    }
+}
+jQuery(document).ready(function () {
+
+
+    jQuery('select[name="wpcs_settings[wpcs_geo_library]"]').on('change', function(e){
+        wpcs_check_geo_library_change();
+    });
+
+    wpcs_check_geo_library_change();
+
+
+    let key_field = jQuery('.wpcs_geo_library_key');
+    const btn = jQuery('.wpcs_download_db');
+    if (jQuery(key_field).val()) {
+        jQuery(btn).on('click', function(e){
+            e.preventDefault();
+            const icon = jQuery(this).find('.dashicons');
+            icon.addClass('spin');
+            const _this = this;
+            jQuery.post(
+            ajaxurl,
+            {
+                action: 'wpcs_download_geoip_db'
+            },
+            function(response) {
+                icon.removeClass('spin');
+                jQuery(_this).find('.wpcs_download_db_text_done').show();
+                jQuery(_this).find('.wpcs_download_db_text').hide();
+                if (response.success) {
+                    jQuery(_this).find('.wpcs_download_db_text_done').show();
+                    jQuery(_this).find('.wpcs_download_db_text').hide();
+                    jQuery(_this).find('.wpcs_download_db_text_done').text(response.success);
+                } else {
+                    jQuery(_this).find('.wpcs_download_db_text_done').hide();
+                    jQuery(_this).find('.wpcs_download_db_text_error').show();
+                    jQuery(_this).find('.wpcs_download_db_text_error').text(response.error);
+                }
+            }
+            ).fail(function() {
+                jQuery(_this).find('.wpcs_download_db_text').hide();
+                jQuery(_this).find('.wpcs_download_db_text_error').show();
+            });    
+            
+
+            
+        });
+    } else {
+	    jQuery(btn).hide();
+    }
+});
 
 /*auto switcher*/
 (function ($) {
