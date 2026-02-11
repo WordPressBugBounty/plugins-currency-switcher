@@ -6,7 +6,7 @@
   Author: realmag777
   Version: 1.3.0
   Requires at least: WP 3.5.0
-  Tested up to: WP 6.8
+  Tested up to: WP 6.9
   Text Domain: currency-switcher
   Domain Path: /languages
   Forum URI: https://pluginus.net/support/forum/wpcs-wordpress-currency-switcher/
@@ -35,7 +35,7 @@ include_once WPCS_PATH . 'classes/auto_switcher.php';
 include_once WPCS_PATH . 'classes/smart-designer.php';
 include_once WPCS_PATH . 'classes/world_currencies.php';
 
-//01-08-2025
+//19-12-2025
 final class WPCS {
 
     public $storage = null;
@@ -1005,7 +1005,7 @@ final class WPCS {
         return $this->render_html(WPCS_PATH . 'views/shortcodes/wpcs_current_currency.php', $data);
     }
 
-    //[wpcs_price value=20 meta_value=my_price_field] -> value should be in default currency
+        //[wpcs_price value=20 meta_value=my_price_field] -> value should be in default currency
     public function wpcs_price($atts) {
         extract(shortcode_atts(array('value' => 0, 'meta_value' => '', 'type' => 'notfixed', 'post_id' => 0, 'fix_currency' => ''), $atts));
         //add price from meta field
@@ -1038,8 +1038,10 @@ final class WPCS {
                     $tmp = explode(':', $v);
                     $fixed_values[$tmp[0]] = $tmp[1];
                 }
-                return $this->price_html(isset($fixed_values[$this->current_currency]) ? $this->format_price_numeric($fixed_values[$this->current_currency], $this->current_currency) : 'none',
-                                array('amount' => $value, 'as_is' => true, 'fixed_values' => $fixed_values));
+                $price_html = $this->price_html(isset($fixed_values[$this->current_currency]) ? $this->format_price_numeric($fixed_values[$this->current_currency], $this->current_currency) : 'none',
+                        array('amount' => $value, 'as_is' => true, 'fixed_values' => $fixed_values));
+
+                return apply_filters('wpcs_shortcode_price_html_manipulation', $price_html, $atts, $this->current_currency);
             } else {
                 return 'none';
             }
@@ -1048,7 +1050,9 @@ final class WPCS {
             return apply_filters('wpcs_price_free_text', "");
         }
         //+++
+
         $price_html = $this->price_html($this->price($value), array('amount' => $value));
+        $price_html = apply_filters('wpcs_shortcode_price_html_manipulation', $price_html, $atts, $this->current_currency);
 
         if ($tmp_currency != $this->current_currency) {
             $this->storage->set_val('wpcs_current_currency', $tmp_currency);

@@ -33,10 +33,10 @@ require 'options-data.php';
                 <div style="padding-top: 24px;">
 
                     <?php if ($this->show_notes): ?>
-                        <?php if (time() < 1709992800): ?>
+                        <?php if (time() < 1764676740): ?>
                             <div>
                                 <br><a href="https://codecanyon.pluginus.net/item/wordpress-currency-switcher/17450674" target="_blank">
-                                        <img src="https://pluginus.net/wp-content/uploads/2024/03/spring-sale-2024-50.png" width="150" alt="50 OFF Spring Sale 2024" />
+                                        <img src="https://pluginus.net/wp-content/uploads/2025/11/DiscountBanner_ItemPreviewBanner_Launch_616x215_50__x2.png" width="150" alt="50 OFF Spring Sale 2024" />
                                     </a>
                             </div>
 

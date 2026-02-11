@@ -3,7 +3,7 @@ Contributors: RealMag777
 Donate link: https://wp-currency.com/a/buy
 Tags: currency, switcher, currency switcher, converter, price
 Requires at least: 3.6.0
-Tested up to: 6.8
+Tested up to: 6.9
 Requires PHP: 5.6
 Stable tag: 1.3.0
 
@@ -249,7 +249,7 @@ It's also a great alternative to PHP sessions. 📷 Screen: https://share.plugin
 
 == License ==
 
-This plugin is copyright pluginus.net &copy; 2012-2025 with [GNU General Public License][] by realmag777.
+This plugin is copyright pluginus.net &copy; 2012-2026 with [GNU General Public License][] by realmag777.
 
 This program is free software; you can redistribute it and/or modify it under the terms of the [GNU General Public License][] as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
 
