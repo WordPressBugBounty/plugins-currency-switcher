@@ -4,7 +4,7 @@
   Plugin URI: https://wp-currency.com/
   Description: Currency Switcher for WordPress - plugin that allows to switch currencies and get their rates converted in the real time on your site!
   Author: realmag777
-  Version: 1.3.0
+  Version: 1.3.1
   Requires at least: WP 3.5.0
   Tested up to: WP 6.9
   Text Domain: currency-switcher
@@ -22,7 +22,7 @@ if (!defined('ABSPATH')) {
 }
 
 //***
-define('WPCS_VERSION', '1.3.0');
+define('WPCS_VERSION', '1.3.1');
 //define('WPCS_VERSION', uniqid('wpcs-')); //for dev
 define('WPCS_PATH', plugin_dir_path(__FILE__));
 define('WPCS_LINK', plugin_dir_url(__FILE__));
@@ -35,7 +35,7 @@ include_once WPCS_PATH . 'classes/auto_switcher.php';
 include_once WPCS_PATH . 'classes/smart-designer.php';
 include_once WPCS_PATH . 'classes/world_currencies.php';
 
-//19-12-2025
+//12-02-2025
 final class WPCS {
 
     public $storage = null;
@@ -1005,7 +1005,7 @@ final class WPCS {
         return $this->render_html(WPCS_PATH . 'views/shortcodes/wpcs_current_currency.php', $data);
     }
 
-        //[wpcs_price value=20 meta_value=my_price_field] -> value should be in default currency
+    //[wpcs_price value=20 meta_value=my_price_field name="sh1"] -> value should be in default currency
     public function wpcs_price($atts) {
         extract(shortcode_atts(array('value' => 0, 'meta_value' => '', 'type' => 'notfixed', 'post_id' => 0, 'fix_currency' => ''), $atts));
         //add price from meta field
@@ -1058,6 +1058,7 @@ final class WPCS {
             $this->storage->set_val('wpcs_current_currency', $tmp_currency);
             $this->current_currency = $tmp_currency;
         }
+
         return $price_html;
     }
 
