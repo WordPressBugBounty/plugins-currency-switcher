@@ -2,10 +2,10 @@
 Contributors: RealMag777
 Donate link: https://wp-currency.com/a/buy
 Tags: currency, switcher, currency switcher, converter, price
-Requires at least: 3.6.0
+Requires at least: 4.9.0
 Tested up to: 6.9
-Requires PHP: 7.2
-Stable tag: 1.3.1
+Requires PHP: 7.4
+Stable tag: 1.3.2
 
 WordPress Currency Switcher Professional - a WordPress plugin that allows switching price currencies on your site with real-time rate conversion!
 
@@ -143,6 +143,9 @@ R: You can report security bugs through the Patchstack Vulnerability Disclosure 
 
 
 == Changelog ==
+
+= 1.3.2 =
+* security fix, thanks to hhhai from patchstack.com
 
 = 1.3.1 =
 * To shortcode wpcs_price added hook wpcs_shortcode_price_html_manipulation which allows to manipulate with generated price html code

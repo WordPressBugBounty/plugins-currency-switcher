@@ -4,9 +4,9 @@
   Plugin URI: https://wp-currency.com/
   Description: Currency Switcher for WordPress - plugin that allows to switch currencies and get their rates converted in the real time on your site!
   Author: realmag777
-  Version: 1.3.1
-  Requires at least: WP 3.5.0
-  Tested up to: WP 6.9
+  Version: 1.3.2
+  Requires at least: WP 4.9.0
+  Tested up to: WP 7.0
   Text Domain: currency-switcher
   Domain Path: /languages
   Forum URI: https://pluginus.net/support/forum/wpcs-wordpress-currency-switcher/
@@ -22,7 +22,7 @@ if (!defined('ABSPATH')) {
 }
 
 //***
-define('WPCS_VERSION', '1.3.1');
+define('WPCS_VERSION', '1.3.2');
 //define('WPCS_VERSION', uniqid('wpcs-')); //for dev
 define('WPCS_PATH', plugin_dir_path(__FILE__));
 define('WPCS_LINK', plugin_dir_url(__FILE__));
@@ -35,7 +35,7 @@ include_once WPCS_PATH . 'classes/auto_switcher.php';
 include_once WPCS_PATH . 'classes/smart-designer.php';
 include_once WPCS_PATH . 'classes/world_currencies.php';
 
-//12-02-2025
+//01-05-2026
 final class WPCS {
 
     public $storage = null;
@@ -1224,7 +1224,7 @@ final class WPCS {
 
         if (!empty($data_attributes)) {
             foreach ($data_attributes as $k => $v) {
-                $data_attributes_txt .= 'data-' . $k . '=' . $v . ' ';
+                $data_attributes_txt .= 'data-' . esc_attr($k) . '="' . esc_attr($v) . '" ';
             }
         }
 
