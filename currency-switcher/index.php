@@ -5,8 +5,8 @@
   Description: Currency Switcher for WordPress - plugin that allows to switch currencies and get their rates converted in the real time on your site!
   Author: realmag777
   Version: 1.3.2
-  Requires at least: WP 4.9.0
-  Tested up to: WP 7.0
+  Requires at least: 4.9.0
+  Tested up to: 7.0
   Text Domain: currency-switcher
   Domain Path: /languages
   Forum URI: https://pluginus.net/support/forum/wpcs-wordpress-currency-switcher/

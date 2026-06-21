@@ -3,7 +3,7 @@ Contributors: RealMag777
 Donate link: https://wp-currency.com/a/buy
 Tags: currency, switcher, currency switcher, converter, price
 Requires at least: 4.9.0
-Tested up to: 6.9
+Tested up to: 7.0
 Requires PHP: 7.4
 Stable tag: 1.3.2
 
